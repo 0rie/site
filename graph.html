@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スマートフォンテンプレート</title>
+  <style>
+    /* スタイルの追加はここに記述します */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    p {
+      color: #666666;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <script>
+  //console.logイベントが発火した時に処理を実行
+  window.console.log = text => {
+    // 初回は表示用の要素を作成
+    if (!$('#console').length) {
+      // 画面下部に固定表示する
+      $('<div id="console"></div>') 
+       .appendTo($('body'))
+       .css({
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '100px',
+        padding: '8px',
+        background: 'rgba(0,0,0,0.7)',
+        fontSize: '10px',
+        color: '#fff',
+        zIndex: 1000000
+      });
+    }
+  
+    //consoleに本来出力される内容を表示していく
+    $('#console').prepend(`${text}<br>`);
+  };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var container = document.querySelector('.container');
+      var touchStatus = document.querySelector('#touch-status');
+      var touchTime = document.querySelector('#time');
+      var touchStartTime;
+      var touchfrag = 0;
+      var touchData = [];
+
+      container.addEventListener('touchstart', function(e) {
+        if (!touchStartTime) {
+          // 初めてタッチが検出された場合のみ計測を開始
+          touchStatus.textContent = 'タッチ開始';
+          touchStartTime = Date.now(); // 計測開始時刻を記録
+          measurementInterval = setInterval(function() {
+            var elapsedTime = Date.now() - touchStartTime; // 経過時間を計算
+
+            if (elapsedTime >= 2000) {
+                touchStatus.textContent = '計測終了';  
+                stopMeasurement(); // 計測終了
+                console.log(touchData); // 結果を表示
+            }
+            else if (touchData.length > 0 && touchData[touchData.length - 1] === 1) {
+              touchData.push(1); // タッチが続いている場合はずっと1を追加
+            }
+          }, 10); // 0.1秒ごとに経過時間をチェック
+        }
+      });
+
+      container.addEventListener('touchstart', function(e) {
+        // タッチが開始されたときの処理をここに記述します
+        touchStatus.textContent = 'タッチ開始';
+        touchData.push(1); // タッチされているので1をリストに追加
+      });
+
+      container.addEventListener('touchend', function(e) {
+        // タッチが終了したときの処理をここに記述します
+        touchStatus.textContent = 'タッチ終了';
+        touchData.push(0); // タッチされていないので0をリストに追加
+      });
+
+      // container.addEventListener('touchmove', function(e) {
+        // タッチ中に移動したときの処理をここに記述します
+        // touchStatus.textContent = 'タッチ移動';
+      // });
+
+      /*
+
+      function drawGraph(data) {
+        var canvas = document.getElementById('graph');
+        var ctx = canvas.getContext('2d');
+        
+        // グラフをクリア
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // データをバーの高さに変換
+        var barHeight = 40;
+        var barMargin = 10;
+        var graphHeight = (barHeight + barMargin) * data.length;
+        
+        canvas.height = graphHeight;
+
+        // データをグラフに描画
+        for (var i = 0; i < data.length; i++) {
+          var barWidth = data[i] === 1 ? 100 : 50;
+          var barX = canvas.width / 2 - barWidth / 2;
+          var barY = i * (barHeight + barMargin);
+
+          ctx.fillStyle = data[i] === 1 ? '#007bff' : '#999999';
+          ctx.fillRect(barX, barY, barWidth, barHeight);
+        }
+      } */
+
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>スマートフォンテンプレート</h1>
+    <p>これはスマートフォン向けの簡単な HTML テンプレートです。</p>
+    <canvas id="graph"></canvas>
+    <div id="touch-status"></div>
+    <div id="time"></div>
+  </div>
+</body>
+</html>
